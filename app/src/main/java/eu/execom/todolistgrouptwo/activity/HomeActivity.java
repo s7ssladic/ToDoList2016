@@ -8,23 +8,26 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import eu.execom.todolistgrouptwo.R;
 import eu.execom.todolistgrouptwo.adapter.TaskAdapter;
+import eu.execom.todolistgrouptwo.database.wrapper.TaskDAOWrapper;
+import eu.execom.todolistgrouptwo.database.wrapper.UserDAOWrapper;
 import eu.execom.todolistgrouptwo.model.Task;
-import eu.execom.todolistgrouptwo.preference.TaskStore_;
+import eu.execom.todolistgrouptwo.model.User;
+import eu.execom.todolistgrouptwo.preference.UserPreferences_;
 
 /**
  * Home {@link AppCompatActivity Activity} for navigation and listing all tasks.
@@ -41,18 +44,14 @@ public class HomeActivity extends AppCompatActivity {
      * Used for identifying results from different activities.
      */
     protected static final int ADD_TASK_REQUEST_CODE = 42;
+    protected static final int LOGIN_REQUEST_CODE = 420; // BLAZE IT
 
     /**
      * Tasks are kept in this list during a user session.
      */
     private List<Task> tasks;
 
-    /**
-     * {@link android.content.SharedPreferences SharedPreferences} are used for storing tasks
-     * for now instead of a database.
-     */
-    @Pref
-    TaskStore_ taskStore;
+    private User user;
 
     /**
      * {@link FloatingActionButton FloatingActionButton} for starting the
@@ -73,17 +72,35 @@ public class HomeActivity extends AppCompatActivity {
     @Bean
     TaskAdapter adapter;
 
+    @Bean
+    UserDAOWrapper userDAOWrapper;
+
+    @Bean
+    TaskDAOWrapper taskDAOWrapper;
+
+    @Pref
+    UserPreferences_ userPreferences;
+
+    @AfterViews
+    @Background
+    void checkUser() {
+        if (!userPreferences.userId().exists()) {
+            LoginActivity_.intent(this).startForResult(LOGIN_REQUEST_CODE);
+            return;
+        }
+
+        user = userDAOWrapper.findById(userPreferences.userId().get());
+        tasks = taskDAOWrapper.findByUser(user);
+
+        initData();
+    }
+
     /**
      * Loads tasks from the {@link android.content.SharedPreferences SharedPreferences}
      * and sets the adapter.
      */
-    @AfterViews
+    @UiThread
     void initData() {
-        Log.i(TAG, taskStore.tasks().get());
-        final Type listType = new TypeToken<List<Task>>() {
-        }.getType();
-        tasks = new Gson().fromJson(taskStore.tasks().get(), listType);
-
         listView.setAdapter(adapter);
         adapter.setTasks(tasks);
 
@@ -118,20 +135,29 @@ public class HomeActivity extends AppCompatActivity {
     /**
      * Called when the {@link AddTaskActivity AddTaskActivity} finishes.
      *
-     * @param responseCode Indicates whether the activity was successful.
+     * @param resultCode Indicates whether the activity was successful.
      * @param task         The new task.
      */
     @OnActivityResult(ADD_TASK_REQUEST_CODE)
-    void onResult(int responseCode, @OnActivityResult.Extra String task) {
-        if (responseCode == RESULT_OK) {
+    void onResult(int resultCode, @OnActivityResult.Extra String task) {
+        if (resultCode == RESULT_OK) {
             Toast.makeText(this, task, Toast.LENGTH_SHORT).show();
             final Gson gson = new Gson();
             final Task newTask = gson.fromJson(task, Task.class);
 
             tasks.add(newTask);
-            taskStore.tasks().put(gson.toJson(tasks));
-
+            newTask.setUser(user);
             adapter.addTask(newTask);
+
+            taskDAOWrapper.create(newTask);
+        }
+    }
+
+    @OnActivityResult(LOGIN_REQUEST_CODE)
+    void onLogin(int resultCode, @OnActivityResult.Extra("user_id") Long id) {
+        if (resultCode == RESULT_OK) {
+            userPreferences.userId().put(id);
+            checkUser();
         }
     }
 }
