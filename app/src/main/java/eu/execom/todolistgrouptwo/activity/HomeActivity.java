@@ -19,6 +19,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.androidannotations.rest.spring.annotations.RestService;
+import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 
@@ -93,7 +94,12 @@ public class HomeActivity extends AppCompatActivity {
         }
 
 //        tasks = taskDAOWrapper.findByUser(user);
-        tasks = restApi.getAllTasks();
+        try {
+            tasks = restApi.getAllTasks();
+        } catch (RestClientException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+
         initData();
     }
 
@@ -141,18 +147,26 @@ public class HomeActivity extends AppCompatActivity {
      * @param task         The new task.
      */
     @OnActivityResult(ADD_TASK_REQUEST_CODE)
+    @Background
     void onResult(int resultCode, @OnActivityResult.Extra String task) {
         if (resultCode == RESULT_OK) {
-            Toast.makeText(this, task, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, task, Toast.LENGTH_SHORT).show();
             final Gson gson = new Gson();
             final Task newTask = gson.fromJson(task, Task.class);
 
-            tasks.add(newTask);
-//            newTask.setUser(user);
-            adapter.addTask(newTask);
-
-            taskDAOWrapper.create(newTask);
+            try {
+                final Task newNewTask = taskDAOWrapper.create(newTask);
+                onTaskCreated(newNewTask);
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
         }
+    }
+
+    @UiThread
+    void onTaskCreated(Task task) {
+        tasks.add(task);
+        adapter.addTask(task);
     }
 
     @OnActivityResult(LOGIN_REQUEST_CODE)

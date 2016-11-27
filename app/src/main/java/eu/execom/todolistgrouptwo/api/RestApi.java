@@ -28,4 +28,7 @@ public interface RestApi {
 
     @Get(value = ApiConstants.TASK_PATH)
     List<Task> getAllTasks();
+
+    @Post(value = ApiConstants.TASK_PATH)
+    Task createTask(@Body Task task);
 }
