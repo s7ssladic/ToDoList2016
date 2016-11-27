@@ -19,6 +19,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'LICENSE.txt'
+    }
 }
 
 dependencies {
@@ -32,6 +43,11 @@ dependencies {
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     apt "org.androidannotations:ormlite:$AAVersion"
     compile "org.androidannotations:ormlite-api:$AAVersion"
+    apt "org.androidannotations:rest-spring:$AAVersion"
+    compile "org.androidannotations:rest-spring-api:$AAVersion"
+
+    // Spring Android rest template
+    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
 
     // https://mvnrepository.com/artifact/com.j256.ormlite/ormlite-android
     compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '5.0'

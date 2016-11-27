@@ -13,10 +13,14 @@ import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.rest.spring.annotations.RestService;
 
 import eu.execom.todolistgrouptwo.R;
+import eu.execom.todolistgrouptwo.api.RestApi;
 import eu.execom.todolistgrouptwo.database.wrapper.UserDAOWrapper;
 import eu.execom.todolistgrouptwo.model.User;
+import eu.execom.todolistgrouptwo.model.dto.TokenContainerDTO;
+import eu.execom.todolistgrouptwo.util.NetworkingUtils;
 
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends AppCompatActivity {
@@ -32,6 +36,9 @@ public class LoginActivity extends AppCompatActivity {
     @ViewById
     EditText password;
 
+    @RestService
+    RestApi restApi;
+
     @EditorAction(R.id.password)
     @Click
     void login() {
@@ -43,13 +50,18 @@ public class LoginActivity extends AppCompatActivity {
 
     @Background
     void tryLogin(String username, String password) {
-        final User user = userDAOWrapper.findByUsernameAndPassword(username, password);
+        //final User user = userDAOWrapper.findByUsernameAndPassword(username, password);
 
+        final TokenContainerDTO tokenContainerDTO =
+                restApi.login(NetworkingUtils.packUserCredentials(username, password));
+
+        /*
         if (user == null) {
             showLoginError();
         } else {
             loginSuccess(user.getId());
         }
+        */
     }
 
     @UiThread
