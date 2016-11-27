@@ -18,11 +18,13 @@ import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.androidannotations.rest.spring.annotations.RestService;
 
 import java.util.List;
 
 import eu.execom.todolistgrouptwo.R;
 import eu.execom.todolistgrouptwo.adapter.TaskAdapter;
+import eu.execom.todolistgrouptwo.api.RestApi;
 import eu.execom.todolistgrouptwo.database.wrapper.TaskDAOWrapper;
 import eu.execom.todolistgrouptwo.database.wrapper.UserDAOWrapper;
 import eu.execom.todolistgrouptwo.model.Task;
@@ -50,8 +52,6 @@ public class HomeActivity extends AppCompatActivity {
      * Tasks are kept in this list during a user session.
      */
     private List<Task> tasks;
-
-    private User user;
 
     /**
      * {@link FloatingActionButton FloatingActionButton} for starting the
@@ -81,17 +81,19 @@ public class HomeActivity extends AppCompatActivity {
     @Pref
     UserPreferences_ userPreferences;
 
+    @RestService
+    RestApi restApi;
+
     @AfterViews
     @Background
     void checkUser() {
-        if (!userPreferences.userId().exists()) {
+        if (!userPreferences.accessToken().exists()) {
             LoginActivity_.intent(this).startForResult(LOGIN_REQUEST_CODE);
             return;
         }
 
-        user = userDAOWrapper.findById(userPreferences.userId().get());
-        tasks = taskDAOWrapper.findByUser(user);
-
+//        tasks = taskDAOWrapper.findByUser(user);
+        tasks = restApi.getAllTasks();
         initData();
     }
 
@@ -146,7 +148,7 @@ public class HomeActivity extends AppCompatActivity {
             final Task newTask = gson.fromJson(task, Task.class);
 
             tasks.add(newTask);
-            newTask.setUser(user);
+//            newTask.setUser(user);
             adapter.addTask(newTask);
 
             taskDAOWrapper.create(newTask);
@@ -154,9 +156,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @OnActivityResult(LOGIN_REQUEST_CODE)
-    void onLogin(int resultCode, @OnActivityResult.Extra("user_id") Long id) {
+    void onLogin(int resultCode, @OnActivityResult.Extra("token") String token) {
         if (resultCode == RESULT_OK) {
-            userPreferences.userId().put(id);
+            userPreferences.accessToken().put(token);
             checkUser();
         }
     }

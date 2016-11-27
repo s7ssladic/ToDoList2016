@@ -16,14 +16,15 @@ public class Task {
     @DatabaseField(canBeNull = false)
     private String description;
 
-    @DatabaseField(columnName = "user", canBeNull = false, foreign = true)
-    private User user;
+//    @DatabaseField(columnName = "user", canBeNull = false, foreign = true)
+//    private User user;
+
+    private boolean finished;
 
     public Task() {
     }
 
-    public Task(User user, String title, String description) {
-        this.user = user;
+    public Task(String title, String description) {
         this.title = title;
         this.description = description;
     }
@@ -52,12 +53,12 @@ public class Task {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public boolean isFinished() {
+        return finished;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     @Override

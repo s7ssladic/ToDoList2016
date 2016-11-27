@@ -39,7 +39,7 @@ public class AddTaskActivity extends AppCompatActivity {
      */
     @Click
     void saveTask() {
-        final Task task = new Task(null, title.getText().toString(),
+        final Task task = new Task(title.getText().toString(),
                 description.getText().toString());
         final Intent intent = new Intent();
         final Gson gson = new Gson();

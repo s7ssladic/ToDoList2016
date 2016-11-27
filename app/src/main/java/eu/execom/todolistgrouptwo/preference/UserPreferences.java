@@ -8,4 +8,6 @@ public interface UserPreferences {
 
     long userId();
 
+    String accessToken();
+
 }

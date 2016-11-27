@@ -21,9 +21,6 @@ public class User {
     @DatabaseField(canBeNull = false)
     private String password;
 
-    @ForeignCollectionField(eager = true)
-    private Collection<Task> tasks = new ArrayList<>();
-
     public User() {
     }
 
@@ -75,19 +72,4 @@ public class User {
         this.password = password;
     }
 
-    public List<Task> getTasks() {
-        return new ArrayList<>(tasks);
-    }
-
-    public void add(Task task) {
-        tasks.add(task);
-    }
-
-    public void remove(Task task) {
-        tasks.remove(task);
-    }
-
-    public void setTasks(Collection<Task> tasks) {
-        this.tasks = tasks;
-    }
 }

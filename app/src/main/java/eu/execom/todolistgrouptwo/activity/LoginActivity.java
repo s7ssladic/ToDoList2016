@@ -2,6 +2,7 @@ package eu.execom.todolistgrouptwo.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ import eu.execom.todolistgrouptwo.util.NetworkingUtils;
 public class LoginActivity extends AppCompatActivity {
 
     public static final int REGISTER_RESULT = 1;
+    private static final String TAG =
+            LoginActivity.class.getSimpleName();
 
     @Bean
     UserDAOWrapper userDAOWrapper;
@@ -52,8 +55,15 @@ public class LoginActivity extends AppCompatActivity {
     void tryLogin(String username, String password) {
         //final User user = userDAOWrapper.findByUsernameAndPassword(username, password);
 
-        final TokenContainerDTO tokenContainerDTO =
-                restApi.login(NetworkingUtils.packUserCredentials(username, password));
+        try {
+            final TokenContainerDTO tokenContainerDTO =
+                    restApi.login(NetworkingUtils.packUserCredentials(username, password));
+
+            loginSuccess(tokenContainerDTO.getAccessToken());
+        } catch (Exception e) {
+            showLoginError();
+            Log.e(TAG, e.getMessage(), e);
+        }
 
         /*
         if (user == null) {
@@ -79,15 +89,15 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnActivityResult(value = REGISTER_RESULT)
     void loginUser(int resultCode, @OnActivityResult.Extra("user_id") Long id) {
-        if (resultCode == RESULT_OK) {
-            loginSuccess(id);
-        }
+//        if (resultCode == RESULT_OK) {
+//            loginSuccess(id);
+//        }
     }
 
     @UiThread
-    void loginSuccess(Long id) {
+    void loginSuccess(String accessToken) {
         final Intent intent = new Intent();
-        intent.putExtra("user_id", id);
+        intent.putExtra("token", accessToken);
 
         setResult(RESULT_OK, intent);
         finish();
