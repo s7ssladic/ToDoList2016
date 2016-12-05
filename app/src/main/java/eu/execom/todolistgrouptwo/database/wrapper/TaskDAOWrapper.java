@@ -35,4 +35,7 @@ public class TaskDAOWrapper {
         return restApi.updateTask(task,task.getId());
     }
 
+    public Task removeTask(Task task){
+        return restApi.removeTask(task.getId());
+    }
 }

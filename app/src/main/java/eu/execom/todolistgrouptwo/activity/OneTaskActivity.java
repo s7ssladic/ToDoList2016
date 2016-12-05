@@ -62,17 +62,41 @@ public class OneTaskActivity extends AppCompatActivity {
         cbIsFinished.setChecked(currentTask.isFinished());
     }
 
-    @Click
+    @Click(R.id.deleteTask)
+    void deleteTask(){
+        doDeleteTask(currentTask);
+    }
+
+    @Background
+    void doDeleteTask(Task task) {
+        try {
+            taskDAOWrapper.removeTask(task);
+            successDeleted();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+            errorUpdate();
+        }
+    }
+
+    @UiThread
+    void successDeleted() {
+        Intent intent = new Intent();
+        intent.putExtra("indexOfTask", indexOfTask);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Click(R.id.updateTask)
     void updateTask() {
         currentTask.setTitle(title.getText().toString());
         currentTask.setDescription(description.getText().toString());
         currentTask.setFinished(cbIsFinished.isChecked());
 
-        updateTaskk(currentTask);
+        doUpdateTask(currentTask);
     }
 
     @Background
-    void updateTaskk(Task task) {
+    void doUpdateTask(Task task) {
         try {
             taskDAOWrapper.update(task);
             successUpdated();

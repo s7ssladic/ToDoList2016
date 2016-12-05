@@ -75,10 +75,11 @@ public class RegisterActivity extends AppCompatActivity {
         UserRegistrationErrorDTO.ModelStateDTO ms = userRegistrationErrorDTO.getModelState();
         if (ms != null) {
             String[] errors = ms.getNizError();
-            for (String error : errors) {
-                if (error.startsWith("Email"))
-                    username.setError(error);
-            }
+            if (errors != null)
+                for (String error : errors) {
+                    if (error.startsWith("Email"))
+                        username.setError(error);
+                }
         }
 
         Toast.makeText(this,

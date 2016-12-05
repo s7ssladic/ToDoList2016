@@ -1,6 +1,7 @@
 package eu.execom.todolistgrouptwo.api;
 
 import org.androidannotations.rest.spring.annotations.Body;
+import org.androidannotations.rest.spring.annotations.Delete;
 import org.androidannotations.rest.spring.annotations.Get;
 import org.androidannotations.rest.spring.annotations.Header;
 import org.androidannotations.rest.spring.annotations.Patch;
@@ -42,6 +43,9 @@ public interface RestApi {
 
     @Put(value = ApiConstants.TASK_PATH + "/{id}")
     Task updateTask(@Body Task task, @Path long id);
+
+    @Delete(value = ApiConstants.TASK_PATH + "/{id}")
+    Task removeTask(@Path long id);
 
     @Post(value = ApiConstants.REGISTER_PATH)
     UserRegistrationDTO registerUser(@Body UserRegistrationDTO userRegistrationDTO);

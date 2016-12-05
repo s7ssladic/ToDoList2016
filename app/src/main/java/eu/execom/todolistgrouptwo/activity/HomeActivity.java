@@ -204,9 +204,13 @@ public class HomeActivity extends AppCompatActivity {
     @Background
     void onUpdate(int resultCode, @OnActivityResult.Extra String task, @OnActivityResult.Extra int indexOfTask) {
         if (resultCode == RESULT_OK) {
-            Gson gson = new Gson();
-            Task updatedTask = gson.fromJson(task, Task.class);
-            tasks.set(indexOfTask, updatedTask);
+            if (task != null) {
+                Gson gson = new Gson();
+                Task updatedTask = gson.fromJson(task, Task.class);
+                tasks.set(indexOfTask, updatedTask);
+            } else {
+                tasks.remove(indexOfTask);
+            }
             setUpdate();
         }
     }

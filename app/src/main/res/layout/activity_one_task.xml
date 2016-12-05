@@ -36,15 +36,28 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.v7.widget.AppCompatCheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/isFinished"
-        android:text="@string/is_task_finished"/>
-
-    <Button
-        android:id="@+id/updateTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/save_task" />
+        android:text="@string/is_task_finished" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/deleteTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_task"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/updateTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_task"
+            android:layout_weight="1"/>
+    </LinearLayout>
 </LinearLayout>
