@@ -1,7 +1,9 @@
 package eu.execom.todolistgrouptwo.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.design.widget.TextInputEditText;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,6 +31,9 @@ public class TaskItemView extends LinearLayout {
     @ViewById
     TextView description;
 
+    @ViewById(R.id.task_done)
+    View view;
+
     public TaskItemView(Context context) {
         super(context);
     }
@@ -42,6 +47,8 @@ public class TaskItemView extends LinearLayout {
     public TaskItemView bind(Task task) {
         title.setText(task.getTitle());
         description.setText(task.getDescription());
+
+        view.setVisibility(task.isFinished() ? View.VISIBLE : View.INVISIBLE);
 
         return this;
     }

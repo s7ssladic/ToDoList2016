@@ -21,6 +21,7 @@
         <activity android:name=".activity.AddTaskActivity_" />
         <activity android:name=".activity.LoginActivity_" />
         <activity android:name=".activity.RegisterActivity_" />
+        <activity android:name=".activity.OneTaskActivity_"></activity>
     </application>
 
 </manifest>

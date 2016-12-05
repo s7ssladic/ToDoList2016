@@ -1,5 +1,6 @@
 package eu.execom.todolistgrouptwo.activity;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +15,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -51,6 +53,7 @@ public class HomeActivity extends AppCompatActivity {
      */
     protected static final int ADD_TASK_REQUEST_CODE = 42;
     protected static final int LOGIN_REQUEST_CODE = 420; // BLAZE IT
+    protected static final int UPDATE_TASK_REQUEST_CODE = 13;
 
     /**
      * Tasks are kept in this list during a user session.
@@ -184,5 +187,32 @@ public class HomeActivity extends AppCompatActivity {
     void onLogout(){
         userPreferences.accessToken().remove();
         checkUser();
+    }
+
+    @ItemClick(R.id.listView)
+    void listViewItemClicker(Task task) {
+        Log.e(TAG, task.toString());
+        Gson gson = new Gson();
+        OneTaskActivity_
+                .intent(this)
+                .extra("task", gson.toJson(task))
+                .extra("indexOfTask", tasks.indexOf(task))
+                .startForResult(UPDATE_TASK_REQUEST_CODE);
+    }
+
+    @OnActivityResult(UPDATE_TASK_REQUEST_CODE)
+    @Background
+    void onUpdate(int resultCode, @OnActivityResult.Extra String task, @OnActivityResult.Extra int indexOfTask) {
+        if (resultCode == RESULT_OK) {
+            Gson gson = new Gson();
+            Task updatedTask = gson.fromJson(task, Task.class);
+            tasks.set(indexOfTask, updatedTask);
+            setUpdate();
+        }
+    }
+
+    @UiThread
+    void setUpdate() {
+        adapter.setTasks(tasks);
     }
 }
