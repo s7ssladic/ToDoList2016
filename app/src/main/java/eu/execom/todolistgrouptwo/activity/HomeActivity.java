@@ -15,6 +15,8 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
@@ -36,6 +38,7 @@ import eu.execom.todolistgrouptwo.preference.UserPreferences_;
  * Home {@link AppCompatActivity Activity} for navigation and listing all tasks.
  */
 @EActivity(R.layout.activity_home)
+@OptionsMenu(R.menu.menu_main)
 public class HomeActivity extends AppCompatActivity {
 
     /**
@@ -175,5 +178,11 @@ public class HomeActivity extends AppCompatActivity {
             userPreferences.accessToken().put(token);
             checkUser();
         }
+    }
+
+    @OptionsItem(R.id.logout)
+    void onLogout(){
+        userPreferences.accessToken().remove();
+        checkUser();
     }
 }

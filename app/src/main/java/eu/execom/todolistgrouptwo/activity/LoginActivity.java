@@ -102,4 +102,9 @@ public class LoginActivity extends AppCompatActivity {
         setResult(RESULT_OK, intent);
         finish();
     }
+
+    public void onBackPressed() {
+        //Zabrana klika na back
+        Log.e(TAG,"BackPressed");
+    }
 }
