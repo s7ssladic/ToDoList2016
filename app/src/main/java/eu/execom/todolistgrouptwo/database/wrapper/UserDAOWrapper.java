@@ -1,31 +1,32 @@
 package eu.execom.todolistgrouptwo.database.wrapper;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.ormlite.annotations.OrmLiteDao;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import eu.execom.todolistgrouptwo.database.DatabaseHelper;
-import eu.execom.todolistgrouptwo.database.dao.UserDAO;
-import eu.execom.todolistgrouptwo.model.User;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.rest.spring.annotations.RestService;
+import org.springframework.web.client.HttpClientErrorException;
+
+import eu.execom.todolistgrouptwo.api.RestApi;
+import eu.execom.todolistgrouptwo.model.dto.UserRegistrationDTO;
+import eu.execom.todolistgrouptwo.model.dto.UserRegistrationErrorDTO;
 
 @EBean
 public class UserDAOWrapper {
 
-    @OrmLiteDao(helper = DatabaseHelper.class)
-    UserDAO userDAO;
+    private static final String TAG = UserDAOWrapper.class.getSimpleName();
 
-    public User findByUsernameAndPassword(String username, String password) {
-        return userDAO.findByUsernameAndPassword(username, password);
-    }
+    @RestService
+    RestApi restApi;
 
-    public boolean create(User user) {
-        if (userDAO.findByUsername(user.getUsername()) != null) {
-            return false;
+    public UserRegistrationErrorDTO create(UserRegistrationDTO user) {
+        try {
+            restApi.registerUser(user);
+        } catch (HttpClientErrorException e) {
+            Gson gb = new GsonBuilder().create();
+            return gb.fromJson(e.getResponseBodyAsString(), UserRegistrationErrorDTO.class);
         }
-        userDAO.create(user);
-        return true;
-    }
 
-    public User findById(long userId) {
-        return userDAO.queryForId(userId);
+        return null;
     }
 }

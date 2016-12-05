@@ -2,8 +2,8 @@ package eu.execom.todolistgrouptwo.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -15,16 +15,19 @@ import org.androidannotations.annotations.ViewById;
 
 import eu.execom.todolistgrouptwo.R;
 import eu.execom.todolistgrouptwo.database.wrapper.UserDAOWrapper;
-import eu.execom.todolistgrouptwo.model.User;
+import eu.execom.todolistgrouptwo.model.dto.UserRegistrationDTO;
+import eu.execom.todolistgrouptwo.model.dto.UserRegistrationErrorDTO;
 
 @EActivity(R.layout.activity_register)
 public class RegisterActivity extends AppCompatActivity {
+
+    private static final String TAG = RegisterActivity.class.getSimpleName();
 
     @Bean
     UserDAOWrapper userDAOWrapper;
 
     @ViewById
-    EditText name;
+    EditText confirmPassword;
 
     @ViewById
     EditText username;
@@ -35,37 +38,58 @@ public class RegisterActivity extends AppCompatActivity {
     @EditorAction(R.id.password)
     @Click
     void register() {
-        final String name = this.name.getText().toString();
         final String username = this.username.getText().toString();
         final String password = this.password.getText().toString();
-        final User user = new User(name, username, password);
-
-        registerUser(user);
+        final String confirmPassword = this.confirmPassword.getText().toString();
+        if (confirmPassword.equals(password)) {
+            final UserRegistrationDTO user = new UserRegistrationDTO(username, password, confirmPassword);
+            registerUser(user);
+        } else {
+            showRegisterErrorPassword();
+        }
     }
 
     @Background
-    void registerUser(User user) {
-        final boolean userCreated = userDAOWrapper.create(user);
+    void registerUser(UserRegistrationDTO user) {
+        final UserRegistrationErrorDTO userCreatedError = userDAOWrapper.create(user);
 
-        if (userCreated) {
-            login(user);
+        if (userCreatedError == null) {
+            login(user.getEmail(), user.getPassword());
         } else {
-            showRegisterError();
+            showRegisterError(userCreatedError);
         }
     }
 
     @UiThread
-    void login(User user) {
+    void login(String username, String password) {
         final Intent intent = new Intent();
-        intent.putExtra("user_id", user.getId());
+        intent.putExtra("username", username);
+        intent.putExtra("password", password);
 
         setResult(RESULT_OK, intent);
         finish();
     }
 
     @UiThread
-    void showRegisterError() {
-        username.setError("Username already exists.");
+    void showRegisterError(UserRegistrationErrorDTO userRegistrationErrorDTO) {
+        UserRegistrationErrorDTO.ModelStateDTO ms = userRegistrationErrorDTO.getModelState();
+        if (ms != null) {
+            String[] errors = ms.getNizError();
+            for (String error : errors) {
+                if (error.startsWith("Email"))
+                    username.setError(error);
+            }
+        }
+
+        Toast.makeText(this,
+                userRegistrationErrorDTO.getMessage(),
+                Toast.LENGTH_SHORT)
+                .show();
+
     }
 
+    @UiThread
+    void showRegisterErrorPassword() {
+        confirmPassword.setError("Password don't match");
+    }
 }

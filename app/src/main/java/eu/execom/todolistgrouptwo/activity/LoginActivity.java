@@ -88,10 +88,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @OnActivityResult(value = REGISTER_RESULT)
-    void loginUser(int resultCode, @OnActivityResult.Extra("user_id") Long id) {
-//        if (resultCode == RESULT_OK) {
-//            loginSuccess(id);
-//        }
+    void loginUser(int resultCode, @OnActivityResult.Extra("username") String username, @OnActivityResult.Extra("password") String password) {
+        if (resultCode == RESULT_OK) {
+            tryLogin(username, password);
+        }
     }
 
     @UiThread

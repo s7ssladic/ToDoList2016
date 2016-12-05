@@ -15,6 +15,7 @@ import eu.execom.todolistgrouptwo.api.interceptor.AuthenticationInterceptor;
 import eu.execom.todolistgrouptwo.constant.ApiConstants;
 import eu.execom.todolistgrouptwo.model.Task;
 import eu.execom.todolistgrouptwo.model.dto.TokenContainerDTO;
+import eu.execom.todolistgrouptwo.model.dto.UserRegistrationDTO;
 
 
 @Rest(rootUrl = ApiConstants.ROOT_URL, converters = {GsonHttpMessageConverter.class,
@@ -26,9 +27,16 @@ public interface RestApi {
     @Post(value = ApiConstants.LOGIN_PATH)
     TokenContainerDTO login(@Body LinkedMultiValueMap<String, String> accountInfo);
 
+    @Header(name = "Content-Type", value = "application/x-www-form-urlencoded")
+    @Post(value = ApiConstants.LOGIN_PATH)
+    TokenContainerDTO register(@Body LinkedMultiValueMap<String, String> accountInfo);
+
     @Get(value = ApiConstants.TASK_PATH)
     List<Task> getAllTasks();
 
     @Post(value = ApiConstants.TASK_PATH)
     Task createTask(@Body Task task);
+
+    @Post(value = ApiConstants.REGISTER_PATH)
+    UserRegistrationDTO registerUser(@Body UserRegistrationDTO userRegistrationDTO);
 }
