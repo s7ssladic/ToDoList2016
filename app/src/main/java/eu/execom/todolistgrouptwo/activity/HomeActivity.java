@@ -1,12 +1,10 @@
 package eu.execom.todolistgrouptwo.activity;
 
-import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -30,10 +28,9 @@ import java.util.List;
 import eu.execom.todolistgrouptwo.R;
 import eu.execom.todolistgrouptwo.adapter.TaskAdapter;
 import eu.execom.todolistgrouptwo.api.RestApi;
-import eu.execom.todolistgrouptwo.database.wrapper.TaskDAOWrapper;
-import eu.execom.todolistgrouptwo.database.wrapper.UserDAOWrapper;
+import eu.execom.todolistgrouptwo.api.wrapper.TaskDAOWrapper;
+import eu.execom.todolistgrouptwo.api.wrapper.UserDAOWrapper;
 import eu.execom.todolistgrouptwo.model.Task;
-import eu.execom.todolistgrouptwo.model.User;
 import eu.execom.todolistgrouptwo.preference.UserPreferences_;
 
 /**

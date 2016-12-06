@@ -1,4 +1,4 @@
-package eu.execom.todolistgrouptwo.database.wrapper;
+package eu.execom.todolistgrouptwo.api.wrapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

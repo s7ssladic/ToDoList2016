@@ -2,9 +2,7 @@ package eu.execom.todolistgrouptwo.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,7 +20,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import eu.execom.todolistgrouptwo.R;
-import eu.execom.todolistgrouptwo.database.wrapper.TaskDAOWrapper;
+import eu.execom.todolistgrouptwo.api.wrapper.TaskDAOWrapper;
 import eu.execom.todolistgrouptwo.model.Task;
 
 @EActivity(R.layout.activity_one_task)

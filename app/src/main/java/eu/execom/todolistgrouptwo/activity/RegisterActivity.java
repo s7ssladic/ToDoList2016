@@ -14,7 +14,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import eu.execom.todolistgrouptwo.R;
-import eu.execom.todolistgrouptwo.database.wrapper.UserDAOWrapper;
+import eu.execom.todolistgrouptwo.api.wrapper.UserDAOWrapper;
 import eu.execom.todolistgrouptwo.model.dto.UserRegistrationDTO;
 import eu.execom.todolistgrouptwo.model.dto.UserRegistrationErrorDTO;
 
